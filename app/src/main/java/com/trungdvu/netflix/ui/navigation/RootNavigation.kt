@@ -14,15 +14,18 @@ import com.trungdvu.netflix.ui.screens.detail.MovieDetailScreen
 import com.trungdvu.netflix.ui.screens.home.HomeScreen
 import com.trungdvu.netflix.ui.screens.home.HomeViewModel
 import com.trungdvu.netflix.ui.screens.settings.SettingsScreen
+import com.trungdvu.netflix.ui.screens.splash.AnimatedSplashScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun RootNavigation(homeViewModel: HomeViewModel) {
+fun RootNavigation(
+    homeViewModel: HomeViewModel,
+) {
     val navController = rememberAnimatedNavController()
 
     AnimatedNavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Splash.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { 300 },
@@ -42,6 +45,11 @@ fun RootNavigation(homeViewModel: HomeViewModel) {
             ) + fadeIn(animationSpec = tween(250))
         }
     ) {
+        composable(
+            route = Screen.Splash.route,
+        ) {
+            AnimatedSplashScreen(navController, homeViewModel)
+        }
         composable(
             route = Screen.Home.route,
         ) {
