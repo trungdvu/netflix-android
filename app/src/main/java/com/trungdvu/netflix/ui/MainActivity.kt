@@ -1,19 +1,26 @@
-package com.trungdvu.netflix
+package com.trungdvu.netflix.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.trungdvu.netflix.ui.theme.NetflixTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalAnimationApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var splashScreen: SplashScreen
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             NetflixTheme {
@@ -22,22 +29,20 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    App()
+                    AppContent {
+                        splashScreen.setKeepOnScreenCondition(it)
+                    }
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NetflixTheme {
-        Greeting("Android")
+    @Composable
+    fun AppContent(splashScreenVisibleCondition: (SplashScreen.KeepOnScreenCondition) -> Unit) {
+        NetflixTheme {
+            Surface {
+                App(splashScreenVisibleCondition)
+            }
+        }
     }
 }

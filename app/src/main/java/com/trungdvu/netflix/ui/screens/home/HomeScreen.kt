@@ -12,7 +12,8 @@ import com.trungdvu.netflix.ui.navigation.Screen
 
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    homeViewModel: HomeViewModel
 ) {
     Column(
         modifier = Modifier.background(Color.Blue)

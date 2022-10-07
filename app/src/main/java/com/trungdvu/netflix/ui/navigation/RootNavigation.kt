@@ -12,11 +12,12 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.trungdvu.netflix.ui.screens.detail.MovieDetailScreen
 import com.trungdvu.netflix.ui.screens.home.HomeScreen
+import com.trungdvu.netflix.ui.screens.home.HomeViewModel
 import com.trungdvu.netflix.ui.screens.settings.SettingsScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun RootNavigation() {
+fun RootNavigation(homeViewModel: HomeViewModel) {
     val navController = rememberAnimatedNavController()
 
     AnimatedNavHost(
@@ -25,26 +26,26 @@ fun RootNavigation() {
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { 300 },
-                animationSpec = tween(300)
-            ) + fadeIn(animationSpec = tween(300))
+                animationSpec = tween(250)
+            ) + fadeIn(animationSpec = tween(250))
         },
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { -300 },
-                animationSpec = tween(300)
-            ) + fadeOut(animationSpec = tween(300))
+                animationSpec = tween(250)
+            ) + fadeOut(animationSpec = tween(250))
         },
         popEnterTransition = {
             slideInHorizontally(
                 initialOffsetX = { -300 },
-                animationSpec = tween(300)
-            ) + fadeIn(animationSpec = tween(300))
+                animationSpec = tween(250)
+            ) + fadeIn(animationSpec = tween(250))
         }
     ) {
         composable(
             route = Screen.Home.route,
         ) {
-            HomeScreen(navController)
+            HomeScreen(navController, homeViewModel)
         }
         composable(
             route = Screen.Settings.route,
