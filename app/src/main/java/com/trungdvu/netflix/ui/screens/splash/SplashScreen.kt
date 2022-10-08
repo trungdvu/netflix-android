@@ -26,6 +26,7 @@ fun AnimatedSplashScreen(
     homeViewModel: HomeViewModel
 ) {
     var startAnimation by remember { mutableStateOf(false) }
+    val movieListState by homeViewModel.movieListState.collectAsState()
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
         animationSpec = tween(
@@ -35,17 +36,14 @@ fun AnimatedSplashScreen(
 
     LaunchedEffect(key1 = true) {
         startAnimation = true
-        delay(1500)
-
-        val isLoading = homeViewModel.movieListState.value.run {
-            loading
-        }
-        if (!isLoading) {
-            navController.popBackStack()
-            navController.navigate(Screen.Home.route)
+        delay(1250)
+        when {
+            movieListState.isSuccessful -> {
+                navController.popBackStack()
+                navController.navigate(Screen.Home.route)
+            }
         }
     }
-
     Splash(alpha = alphaAnim.value)
 }
 

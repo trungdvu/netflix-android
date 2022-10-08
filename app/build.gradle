@@ -68,7 +68,6 @@ dependencies {
 
     implementation "androidx.core:core-splashscreen:1.0.0"
 
-    //dagger hilt
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-android-compiler:2.44"
 
@@ -76,6 +75,9 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
 
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.26.5-rc"
+
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 }
 
 kapt {

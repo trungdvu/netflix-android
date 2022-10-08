@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.trungdvu.netflix.model.Movie
+import com.trungdvu.netflix.ui.components.NetflixSurface
+import com.trungdvu.netflix.ui.screens.home.components.HighlightedMovie
 import com.trungdvu.netflix.ui.theme.NetflixTheme
 
 @Composable
@@ -27,32 +30,16 @@ fun HomeScreen(
 ) {
     val movies by homeViewModel.movieListState.collectAsState()
 
-    LazyColumn(
-        modifier = Modifier.background(NetflixTheme.colors.appBackground)
+    NetflixSurface(
+        color = NetflixTheme.colors.appBackground
     ) {
-        when {
-            movies.loading -> {
-                item {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(top = 16.dp),
-                            color = NetflixTheme.colors.brand
-                        )
-                    }
-                }
-            }
-
-            movies.isSuccessful -> {
-                items(movies.data!!.results) { movie ->
-                    Text(
-                        text = movie.originalTitle,
-                        maxLines = 1,
-                        color = NetflixTheme.colors.textPrimary
-                    )
-                }
+        LazyColumn() {
+            item {
+                HighlightedMovie(
+                    onClick = {},
+                    modifier = Modifier,
+                    movie = movies.data!!.results[0]
+                )
             }
         }
     }

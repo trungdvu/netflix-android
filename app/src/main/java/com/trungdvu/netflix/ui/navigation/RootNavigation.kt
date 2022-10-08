@@ -26,24 +26,6 @@ fun RootNavigation(
     AnimatedNavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
-        enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { 300 },
-                animationSpec = tween(250)
-            ) + fadeIn(animationSpec = tween(250))
-        },
-        exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { -300 },
-                animationSpec = tween(250)
-            ) + fadeOut(animationSpec = tween(250))
-        },
-        popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -300 },
-                animationSpec = tween(250)
-            ) + fadeIn(animationSpec = tween(250))
-        }
     ) {
         composable(
             route = Screen.Splash.route,
@@ -52,6 +34,24 @@ fun RootNavigation(
         }
         composable(
             route = Screen.Home.route,
+//            enterTransition = {
+//                slideInHorizontally(
+//                    initialOffsetX = { 300 },
+//                    animationSpec = tween(250)
+//                ) + fadeIn(animationSpec = tween(250))
+//            },
+//            exitTransition = {
+//                slideOutHorizontally(
+//                    targetOffsetX = { -300 },
+//                    animationSpec = tween(250)
+//                ) + fadeOut(animationSpec = tween(250))
+//            },
+//            popEnterTransition = {
+//                slideInHorizontally(
+//                    initialOffsetX = { -300 },
+//                    animationSpec = tween(250)
+//                ) + fadeIn(animationSpec = tween(250))
+//            }
         ) {
             HomeScreen(navController, homeViewModel)
         }
