@@ -72,7 +72,7 @@ fun HighlightedMovieItem(
     modifier: Modifier = Modifier
 ) {
     Box(
-        contentAlignment = Alignment.BottomCenter
+        contentAlignment = Alignment.BottomCenter,
     ) {
         FullScreenRemoteImage(
             imageUrl = ApiConstant.IMAGE_BASE_URL_W500 + movie.posterPath,
@@ -90,11 +90,9 @@ fun HighlightedMovieItem(
             modifier = modifier
                 .fillMaxWidth()
                 .height(640.dp)
-                .clickable(onClick = {
-                    onMovieSelected(movie.id)
-                })
-                .padding(bottom = 124.dp, top = 124.dp, start = 48.dp, end = 48.dp)
-        )
+                .padding(bottom = 124.dp, top = 124.dp, start = 48.dp, end = 48.dp),
+
+            )
     }
 }
 

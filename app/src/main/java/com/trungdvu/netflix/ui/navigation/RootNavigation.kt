@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -19,10 +21,9 @@ import com.trungdvu.netflix.ui.screens.splash.AnimatedSplashScreen
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun RootNavigation(
+    navController: NavHostController,
     homeViewModel: HomeViewModel,
 ) {
-    val navController = rememberAnimatedNavController()
-
     AnimatedNavHost(
         navController = navController,
         startDestination = Screen.Splash.route,

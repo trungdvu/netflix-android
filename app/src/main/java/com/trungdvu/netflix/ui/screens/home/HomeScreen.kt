@@ -37,7 +37,14 @@ fun HomeScreen(
                 HighlightedMovie(
                     onClick = {},
                     modifier = Modifier,
-                    movie = movies.data!!.results[0]
+                    movie = movies.data!!.results[1]
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                TrendingNowSection(
+                    onMovieClick = { movieId ->
+                    },
+                    modifier = Modifier,
+                    trendingNowMovies = movies.data!!.results
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 TrendingNowSection(
