@@ -1,9 +1,7 @@
 package com.trungdvu.netflix.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
@@ -21,6 +19,7 @@ import androidx.navigation.NavController
 import com.trungdvu.netflix.model.Movie
 import com.trungdvu.netflix.ui.components.NetflixSurface
 import com.trungdvu.netflix.ui.screens.home.components.HighlightedMovie
+import com.trungdvu.netflix.ui.screens.home.components.TrendingNowSection
 import com.trungdvu.netflix.ui.theme.NetflixTheme
 
 @Composable
@@ -40,6 +39,14 @@ fun HomeScreen(
                     modifier = Modifier,
                     movie = movies.data!!.results[0]
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+                TrendingNowSection(
+                    onMovieClick = { movieId ->
+                    },
+                    modifier = Modifier,
+                    trendingNowMovies = movies.data!!.results
+                )
+                Spacer(modifier = Modifier.height(48.dp))
             }
         }
     }
