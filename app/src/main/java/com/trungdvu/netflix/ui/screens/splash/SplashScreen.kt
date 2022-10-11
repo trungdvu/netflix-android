@@ -25,7 +25,7 @@ fun AnimatedSplashScreen(
     navController: NavHostController,
 ) {
     var startAnimation by remember { mutableStateOf(false) }
-    val movieListState by ViewModelProvider.homeViewModel.movieListState.collectAsState()
+    val movieListState by ViewModelProvider.homeViewModel.topRatedMovies.collectAsState()
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
         animationSpec = tween(

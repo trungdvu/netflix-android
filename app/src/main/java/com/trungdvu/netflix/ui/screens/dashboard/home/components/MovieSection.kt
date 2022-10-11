@@ -15,14 +15,15 @@ import com.trungdvu.netflix.ui.components.SmallMovieItem
 import com.trungdvu.netflix.ui.theme.NetflixTheme
 
 @Composable
-fun TrendingNowSection(
+fun MovieSection(
+    title: String,
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    trendingNowMovies: List<Movie>
+    movies: List<Movie>
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Trending Now",
+            text = title,
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -32,12 +33,12 @@ fun TrendingNowSection(
             modifier = Modifier.padding(start = 8.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
-        TrendingNowMoviesCarousel(movies = trendingNowMovies, onMovieSelected = onMovieClick)
+        MovieSectionCarousel(movies = movies, onMovieSelected = onMovieClick)
     }
 }
 
 @Composable
-private fun TrendingNowMoviesCarousel(
+private fun MovieSectionCarousel(
     movies: List<Movie>,
     onMovieSelected: (Long) -> Unit
 ) {

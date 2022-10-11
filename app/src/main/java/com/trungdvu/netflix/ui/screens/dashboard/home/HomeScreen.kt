@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.trungdvu.netflix.ui.components.NetflixSurface
 import com.trungdvu.netflix.ui.screens.dashboard.home.components.HighlightedMovie
-import com.trungdvu.netflix.ui.screens.dashboard.home.components.TrendingNowSection
+import com.trungdvu.netflix.ui.screens.dashboard.home.components.LargeMovieSection
+import com.trungdvu.netflix.ui.screens.dashboard.home.components.MovieSection
 import com.trungdvu.netflix.ui.theme.NetflixTheme
 import com.trungdvu.netflix.ui.viewModel.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
@@ -24,10 +25,13 @@ fun HomeScreen(
     coroutineScope: CoroutineScope,
     scrollState: LazyListState
 ) {
-    val movies by ViewModelProvider.homeViewModel.movieListState.collectAsState()
+    val topRatedMovies by ViewModelProvider.homeViewModel.topRatedMovies.collectAsState()
+    val nowPlayingMovies by ViewModelProvider.nowPlayingViewModel.nowPlayingMovies.collectAsState()
+    val popularMovies by ViewModelProvider.popularViewModel.popularMovies.collectAsState()
+    val netflixOriginalMovies by ViewModelProvider.netflixOriginalViewModel.netflixOriginalMovies.collectAsState()
 
     NetflixSurface(
-        color = NetflixTheme.colors.appBackground
+        color = NetflixTheme.colors.appBackground,
     ) {
         LazyColumn(
             state = scrollState,
@@ -36,22 +40,59 @@ fun HomeScreen(
                 HighlightedMovie(
                     onClick = {},
                     modifier = Modifier,
-                    movie = movies.data!!.results[1]
+                    movie = topRatedMovies.data!!.results[1]
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
-                TrendingNowSection(
+                MovieSection(
+                    title = "Top Picks for trungvu",
                     onMovieClick = { movieId ->
                     },
                     modifier = Modifier,
-                    trendingNowMovies = movies.data!!.results
+                    movies = topRatedMovies.data!!.results
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
-                TrendingNowSection(
-                    onMovieClick = { movieId ->
-                    },
-                    modifier = Modifier,
-                    trendingNowMovies = movies.data!!.results
-                )
+                when {
+                    nowPlayingMovies.isSuccessful -> {
+                        MovieSection(
+                            title = "Trending Now",
+                            onMovieClick = { movieId ->
+                            },
+                            modifier = Modifier,
+                            movies = nowPlayingMovies.data!!.results
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                when {
+                    netflixOriginalMovies.isSuccessful -> {
+                        LargeMovieSection(
+                            title = "Only on Netflix",
+                            onMovieClick = { movieId ->
+                            },
+                            modifier = Modifier,
+                            movies = netflixOriginalMovies.data!!.results
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                when {
+                    popularMovies.isSuccessful -> {
+                        MovieSection(
+                            title = "Popular on Netflix",
+                            onMovieClick = { movieId ->
+                            },
+                            modifier = Modifier,
+                            movies = popularMovies.data!!.results
+                        )
+                    }
+                }
+
+
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }

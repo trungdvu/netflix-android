@@ -9,6 +9,7 @@ object ApiConstant {
     const val ENDPOINT_MOVIE = "movie/{movie_id}"
     const val ENDPOINT_MOVIE_VIDEO = "movie/{movie_id}/videos"
     const val ENDPOINT_SIMILAR_MOVIES = "movie/{movie_id}/similar"
+    const val NETFLIX_ORIGINAL = "/discover/tv?with_networks=213"
 
     const val LANG_ENG = "en-US"
     const val IMAGE_BASE_URL_W500 = "https://image.tmdb.org/t/p/w500"

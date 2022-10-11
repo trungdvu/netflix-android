@@ -17,12 +17,6 @@ interface MovieApiService {
         @Query("api_key") apiKey: String,
     ): MovieListResponse
 
-    @GET(ApiConstant.ENDPOINT_MOVIE)
-    suspend fun getMovieById(
-        @Path("movieId") movieId: Long,
-        @Query("api_key") apiKey: String
-    ): Movie
-
     @GET(ApiConstant.ENDPOINT_NOW_PLAYING)
     suspend fun getNowPlayingMovies(
         @Query("language") language: String,
@@ -32,6 +26,13 @@ interface MovieApiService {
 
     @GET(ApiConstant.ENDPOINT_POPULAR)
     suspend fun getPopularMovies(
+        @Query("language") language: String,
+        @Query("page") page: Int,
+        @Query("api_key") apiKey: String,
+    ): MovieListResponse
+
+    @GET(ApiConstant.ENDPOINT_POPULAR)
+    suspend fun getNetflixOriginalMovies(
         @Query("language") language: String,
         @Query("page") page: Int,
         @Query("api_key") apiKey: String,
@@ -48,4 +49,11 @@ interface MovieApiService {
         @Path("movie_id") movieId: Long,
         @Query("api_key") apiKey: String
     ): SimilarMovieListResponse
+
+    @GET(ApiConstant.ENDPOINT_MOVIE)
+    suspend fun getMovieById(
+        @Path("movieId") movieId: Long,
+        @Query("api_key") apiKey: String
+    ): Movie
+
 }

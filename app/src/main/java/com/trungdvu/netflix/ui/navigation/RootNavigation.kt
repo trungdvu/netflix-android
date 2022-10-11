@@ -1,32 +1,21 @@
 package com.trungdvu.netflix.ui.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.trungdvu.netflix.ui.screens.dashboard.DashboardSections
 import com.trungdvu.netflix.ui.screens.dashboard.downloads.DownloadsScreen
-import com.trungdvu.netflix.ui.screens.detail.MovieDetailScreen
 import com.trungdvu.netflix.ui.screens.dashboard.home.HomeScreen
-import com.trungdvu.netflix.ui.screens.dashboard.home.HomeViewModel
 import com.trungdvu.netflix.ui.screens.dashboard.new_and_hot.NewAndHotScreen
 import com.trungdvu.netflix.ui.screens.dashboard.play_something.PlaySomethingScreen
-import com.trungdvu.netflix.ui.screens.settings.SettingsScreen
 import com.trungdvu.netflix.ui.screens.splash.AnimatedSplashScreen
 import kotlinx.coroutines.CoroutineScope
 

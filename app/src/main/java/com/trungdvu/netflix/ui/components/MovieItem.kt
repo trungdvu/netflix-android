@@ -61,6 +61,43 @@ fun SmallMovieItem(
 }
 
 @Composable
+fun LargeMovieItem(
+    movie: Movie,
+    onMovieSelected: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ConstraintLayout {
+        // Create references for the composables to constrain
+        val (movieImage, topTrendingBanner) = createRefs()
+
+        RoundedCornerRemoteImage(
+            imageUrl = ApiConstant.IMAGE_BASE_URL_W500 + movie.posterPath,
+            modifier = modifier
+                .width(170.dp)
+                .height(320.dp)
+                .clickable(onClick = {
+                    onMovieSelected(movie.id)
+                })
+                .constrainAs(movieImage) {
+                    top.linkTo(parent.top)
+                },
+            cornerPercent = 3
+        )
+        if (movie.voteAverage >= 8) {
+            TopTrendingBanner(
+                modifier = modifier.constrainAs(topTrendingBanner) {
+                    end.linkTo(movieImage.end)
+                },
+                width = 25.dp,
+                height = 32.dp,
+                fontSizeTitle = 8.sp,
+                fontSizeSubtitle = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
 fun TopTrendingBanner(
     modifier: Modifier,
     width: Dp,
