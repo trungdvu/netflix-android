@@ -33,3 +33,48 @@ data class MovieListResponse(
     @SerializedName("total_results")
     val totalResults: Int
 )
+
+data class SimilarMovie(
+    val id: Int,
+    val adult: Boolean,
+    @SerializedName("backdrop_path")
+    val backDropPath: String,
+    @SerializedName("poster_path")
+    val posterPath: String,
+    @SerializedName("original_language")
+    val originalLanguage: String,
+    val title: String,
+    val overview: String,
+    val video: Boolean,
+)
+
+data class SimilarMovieListResponse(
+    val results: List<SimilarMovie>
+)
+
+data class MovieVideo(
+    val key: String,
+    val url: String,
+    val name: String,
+    val size: Int,
+    val type: String
+)
+
+data class MoviesVideoListResponse(
+    val results: List<MovieVideoItemDto>
+)
+
+data class MovieVideoItemDto(
+    val key: String,
+    val name: String,
+    val size: Int,
+    val type: String
+) {
+    fun asDomainModel() = MovieVideo(
+        key = key,
+        url = "https://www.youtube.com/watch?v=$key",
+        name = name,
+        size = size,
+        type = type
+    )
+}

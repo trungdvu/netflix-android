@@ -18,15 +18,14 @@ import com.trungdvu.netflix.ui.navigation.Screen
 import com.trungdvu.netflix.ui.theme.NetflixTheme
 import kotlinx.coroutines.delay
 import com.trungdvu.netflix.R
-import com.trungdvu.netflix.ui.screens.home.HomeViewModel
+import com.trungdvu.netflix.ui.viewModel.ViewModelProvider
 
 @Composable
 fun AnimatedSplashScreen(
     navController: NavHostController,
-    homeViewModel: HomeViewModel
 ) {
     var startAnimation by remember { mutableStateOf(false) }
-    val movieListState by homeViewModel.movieListState.collectAsState()
+    val movieListState by ViewModelProvider.homeViewModel.movieListState.collectAsState()
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
         animationSpec = tween(
@@ -40,7 +39,7 @@ fun AnimatedSplashScreen(
         when {
             movieListState.isSuccessful -> {
                 navController.popBackStack()
-                navController.navigate(Screen.Home.route)
+                navController.navigate(Screen.Dashboard.route)
             }
         }
     }

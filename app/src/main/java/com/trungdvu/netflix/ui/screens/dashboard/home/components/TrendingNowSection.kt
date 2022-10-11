@@ -1,4 +1,4 @@
-package com.trungdvu.netflix.ui.screens.home.components
+package com.trungdvu.netflix.ui.screens.dashboard.home.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow

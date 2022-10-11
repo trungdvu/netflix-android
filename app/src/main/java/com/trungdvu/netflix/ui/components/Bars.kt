@@ -2,10 +2,10 @@ package com.trungdvu.netflix.ui.components
 
 import android.annotation.SuppressLint
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -26,10 +26,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -46,7 +51,14 @@ private val MovieDetailTopBarHeight = 70.dp
 @Composable
 fun getTopBarWidthState(isScrolledDown: Boolean): State<Dp> {
     return animateDpAsState(
-        targetValue = if (isScrolledDown) 0.dp else 24.dp,
+        targetValue = if (isScrolledDown) 0.dp else 0.dp,
+    )
+}
+
+@Composable
+fun getTopBarBlurState(isScrolledDown: Boolean): State<Dp> {
+    return animateDpAsState(
+        targetValue = if (isScrolledDown) 50.dp else 0.dp,
     )
 }
 
@@ -64,20 +76,18 @@ fun TopBar(
 ) {
     NetflixSurface(
         modifier = modifier
-            .padding(top = getTopBarWidthState(isScrolledDown = isScrolledDown).value)
-            .height(TopBarHeight),
-        color = getTopBarColorState(isScrolledDown = isScrolledDown).value
+            .padding(top = getTopBarWidthState(isScrolledDown = isScrolledDown).value),
+        color = getTopBarColorState(isScrolledDown = isScrolledDown).value,
     ) {
         TopAppBar(
             elevation = 0.dp,
             backgroundColor = Color.Transparent,
             contentColor = NetflixTheme.colors.uiBackground.copy(alpha = AlphaNearOpaque),
-            modifier = modifier
-                .height(TopBarHeight)
+            modifier = modifier.padding(top = 24.dp, bottom = 4.dp)
         ) {
-            AnimatedVisibility(visible = isScrolledDown.not()) {
-                AppBar()
-            }
+            AppBar()
+//          AnimatedVisibility(visible = isScrolledDown.not(), enter = fadeIn(), exit = fadeOut()) {
+//          }
         }
     }
 }
@@ -88,11 +98,14 @@ fun AppBar(
     upPress: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.padding(start = 10.dp)
+        modifier = Modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
-                .weight(6f)
                 .align(Alignment.CenterVertically)
         ) {
             if (showBack) {
@@ -112,31 +125,70 @@ fun AppBar(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically)
-                .clickable { }
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Search,
-                contentDescription = "Search",
-                tint = NetflixTheme.colors.iconInteractive
-            )
-        }
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically)
-                .clickable { }
-        ) {
-            Image(
-                painterResource(id = R.drawable.netflix_profile),
-                contentDescription = "User Profile",
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+
+            ) {
+            Box(
                 modifier = Modifier
-                    .size(25.dp)
-            )
+                    .clickable { }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = "Search",
+                    tint = NetflixTheme.colors.iconInteractive
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Box(
+                modifier = Modifier
+                    .clickable { }
+            ) {
+                Image(
+                    painterResource(id = R.drawable.netflix_profile),
+                    contentDescription = "User Profile",
+                    modifier = Modifier
+                        .size(25.dp)
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun TopAppBarMenuItem(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        color = NetflixTheme.colors.textSecondary,
+        maxLines = 1,
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            fontWeight = FontWeight.Medium,
+            shadow = Shadow(color = Color.Black, blurRadius = 10f),
+            fontSize = 16.sp
+        ),
+        modifier = modifier
+            .padding(5.dp)
+            .clickable { }
+    )
+}
+
+@Composable
+private fun MenuBar() {
+    Row {
+        TopAppBarMenuItem(
+            text = "TV Shows",
+        )
+        TopAppBarMenuItem(
+            text = "Movies",
+        )
+        TopAppBarMenuItem(
+            text = "Categories",
+        )
     }
 }
 

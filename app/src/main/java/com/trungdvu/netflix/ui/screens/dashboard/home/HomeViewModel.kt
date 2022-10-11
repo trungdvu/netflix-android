@@ -1,4 +1,4 @@
-package com.trungdvu.netflix.ui.screens.home
+package com.trungdvu.netflix.ui.screens.dashboard.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

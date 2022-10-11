@@ -4,6 +4,7 @@ import com.trungdvu.netflix.data.remote.MovieApiService
 import com.trungdvu.netflix.model.HomeMovieListState
 import com.trungdvu.netflix.model.MovieListResponse
 import com.trungdvu.netflix.model.Result
+import com.trungdvu.netflix.model.SimilarMovieListResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -27,4 +28,17 @@ class MovieRepository @Inject constructor(
     }.onStart {
         emit(HomeMovieListState(loading = true))
     }
+
+    suspend fun getSimilarMovies(movieId: Long): Flow<HomeMovieListState<SimilarMovieListResponse>> =
+        flow {
+            val res = movieApiService.getSimilarMovies(
+                apiKey = "569137e6b761b50e2a92cd0a7afd29ea",
+                movieId = movieId,
+            )
+            emit(HomeMovieListState.fromResult(Result.Success(res)))
+        }.catch {
+            emit(HomeMovieListState.fromResult(Result.Error("Something went wrong")))
+        }.onStart {
+            emit(HomeMovieListState(loading = true))
+        }
 }

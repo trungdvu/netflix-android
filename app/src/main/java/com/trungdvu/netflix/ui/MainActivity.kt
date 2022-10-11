@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     .background(MaterialTheme.colors.background)
                     .fillMaxSize(),
             ) {
-                App(splashScreenVisibleCondition)
+                App()
             }
         }
     }

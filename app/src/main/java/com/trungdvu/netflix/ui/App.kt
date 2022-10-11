@@ -2,61 +2,103 @@ package com.trungdvu.netflix.ui
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.splashscreen.SplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.trungdvu.netflix.ui.components.DashboardSections
-import com.trungdvu.netflix.ui.components.NetflixBottomBar
-import com.trungdvu.netflix.ui.components.NetflixScaffold
-import com.trungdvu.netflix.ui.components.TopBar
+import com.trungdvu.netflix.ui.components.*
+import com.trungdvu.netflix.ui.navigation.MainActions
 import com.trungdvu.netflix.ui.navigation.RootNavigation
-import com.trungdvu.netflix.ui.screens.home.HomeViewModel
+import com.trungdvu.netflix.ui.viewModel.ProvideMultiViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import com.trungdvu.netflix.ui.screens.dashboard.DashboardSections
+import com.trungdvu.netflix.ui.screens.dashboard.NetflixBottomBar
+import com.trungdvu.netflix.ui.theme.NetflixTheme
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun App(splashScreenVisibleCondition: (SplashScreen.KeepOnScreenCondition) -> Unit) {
-    val context = LocalContext.current
-    var isOnline by remember {
-        mutableStateOf(checkIfOnline(context))
+fun App() {
+    ProvideMultiViewModel {
+        val context = LocalContext.current
+        val navController = rememberAnimatedNavController()
+        var isOnline by remember {
+            mutableStateOf(checkIfOnline(context))
 
-    }
-    val tabs = remember { DashboardSections.values() }
-    val (shouldShowAppBar, updateAppBarVisibility) = remember { mutableStateOf(true) }
-    val homeScreenScrollState = rememberLazyListState()
-    val isScrolledDown = remember {
-        derivedStateOf {
-            homeScreenScrollState.firstVisibleItemScrollOffset > 0
         }
-    }
-    val homeViewModel: HomeViewModel = viewModel()
-    val navController = rememberAnimatedNavController()
+        val (shouldShowAppBar, updateAppBarVisibility) = remember { mutableStateOf(true) }
+        val homeScreenScrollState = rememberLazyListState()
+        val isScrolledDown = remember {
+            derivedStateOf {
+                homeScreenScrollState.firstVisibleItemScrollOffset > 0
+            }
+        }
+        val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+        )
+        val bottomSheetCoroutineScope = rememberCoroutineScope()
+        val mainNavActions = remember(navController) {
+            MainActions(navController, updateAppBarVisibility)
+        }
+        val tabs = remember { DashboardSections.values() }
 
-    if (isOnline) {
-        NetflixScaffold(
-
-            bottomBar = { NetflixBottomBar(navController = navController, tabs = tabs) },
-            fab = {
-                if (shouldShowAppBar) {
-//                    PlaySomethingFAB(isScrolledUp = isScrolledDown.value.not())
+        if (isOnline) {
+            BottomSheetScaffold(
+                scaffoldState = bottomSheetScaffoldState,
+                sheetContent = {
+                    BottomSheetContent(
+                        onMovieClick = { movieId: Long ->
+                            closeBottomSheet(bottomSheetCoroutineScope, bottomSheetScaffoldState)
+                            mainNavActions.openMovieDetails(movieId)
+                        },
+                        onBottomSheetClosePressed = {
+                            closeBottomSheet(bottomSheetCoroutineScope, bottomSheetScaffoldState)
+                        }
+                    )
+                },
+                sheetPeekHeight = 0.dp
+            ) {
+                NetflixScaffold(
+                    bottomBar = {
+                        NetflixBottomBar(
+                            navController = navController,
+                            tabs = tabs
+                        )
+                    },
+                    fab = {
+                        if (shouldShowAppBar) {
+                            PlaySomethingFAB(isScrolledUp = isScrolledDown.value.not())
+                        }
+                    }
+                ) { innerPaddingModifier ->
+                    RootNavigation(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPaddingModifier),
+                        bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        bottomSheetCoroutineScope = bottomSheetCoroutineScope,
+                        homeScreenScrollState = homeScreenScrollState,
+                    )
+                    if (shouldShowAppBar) {
+                        TopBar(isScrolledDown = isScrolledDown.value)
+                    }
                 }
             }
-        ) { innerPaddingModifier ->
-            if (shouldShowAppBar) {
-                RootNavigation(navController, homeViewModel)
-                TopBar(isScrolledDown = isScrolledDown.value)
+        } else {
+            OfflineDialog {
+                isOnline = checkIfOnline(context)
             }
-        }
-    } else {
-        OfflineDialog {
-            isOnline = checkIfOnline(context)
         }
     }
 }
@@ -80,4 +122,60 @@ private fun checkIfOnline(context: Context): Boolean {
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val activeNetwork = cm.activeNetworkInfo
     return activeNetwork?.isConnectedOrConnecting == true
+}
+
+@ExperimentalMaterialApi
+private fun closeBottomSheet(
+    bottomSheetCoroutineScope: CoroutineScope,
+    bottomSheetScaffoldState: BottomSheetScaffoldState
+) {
+    bottomSheetCoroutineScope.launch {
+        bottomSheetScaffoldState.bottomSheetState.collapse()
+    }
+}
+
+private val ExtendedFabTextPadding = 20.dp
+
+@Composable
+fun getFabTextTextPaddingState(isScrolledDown: Boolean): State<Dp> {
+    return animateDpAsState(
+        targetValue = if (isScrolledDown) 0.dp else ExtendedFabTextPadding,
+    )
+}
+
+@ExperimentalAnimationApi
+@Composable
+fun PlaySomethingFAB(
+    isScrolledUp: Boolean
+) {
+    FloatingActionButton(
+        onClick = {},
+        backgroundColor = NetflixTheme.colors.progressIndicatorBg,
+        elevation = FloatingActionButtonDefaults.elevation(8.dp)
+    ) {
+        val fabTextPadding = getFabTextTextPaddingState(isScrolledDown = isScrolledUp.not()).value
+        Box(
+            modifier = Modifier.padding(
+                start = fabTextPadding,
+                end = fabTextPadding,
+            ),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.ExitToApp,
+                    contentDescription = "Shuffle",
+                    tint = NetflixTheme.colors.iconTint
+                )
+                Spacer(Modifier.width(fabTextPadding))
+                AnimatedVisibility(visible = isScrolledUp) {
+                    Text(
+                        text = "Play Something",
+                        color = NetflixTheme.colors.uiLightBackground,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+            }
+        }
+    }
 }

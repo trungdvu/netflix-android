@@ -1,4 +1,4 @@
-package com.trungdvu.netflix.ui.screens.home.components
+package com.trungdvu.netflix.ui.screens.dashboard.home.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
