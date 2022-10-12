@@ -8,6 +8,8 @@ import com.trungdvu.netflix.ui.screens.dashboard.home.view_model.HomeViewModel
 import com.trungdvu.netflix.ui.screens.dashboard.home.view_model.NetflixOriginalViewModel
 import com.trungdvu.netflix.ui.screens.dashboard.home.view_model.NowPlayingViewModel
 import com.trungdvu.netflix.ui.screens.dashboard.home.view_model.PopularViewModel
+import com.trungdvu.netflix.ui.screens.detail.viewModel.MovieVideosViewModel
+import com.trungdvu.netflix.ui.screens.detail.viewModel.VideoViewModel
 
 object ViewModelProvider {
     val homeViewModel: HomeViewModel
@@ -26,10 +28,21 @@ object ViewModelProvider {
         @Composable
         get() = LocalNetflixOriginalViewModel.current
 
-    val selectedMovieViewModel: PreviewMovieViewModel
+    val previewMovieViewModel: PreviewMovieViewModel
         @Composable
-        get() = LocalSelectedMovieViewModel.current
+        get() = LocalPreviewMovieViewModel.current
 
+    val videoViewModel: VideoViewModel
+        @Composable
+        get() = LocalVideoViewModel.current
+
+    val movieVideosViewModel: MovieVideosViewModel
+        @Composable
+        get() = LocalMovieVideoByIdViewModel.current
+
+    val appViewModel: AppViewModel
+        @Composable
+        get() = LocalAppViewModel.current
 }
 
 @Composable
@@ -39,23 +52,38 @@ fun ProvideMultiViewModel(content: @Composable () -> Unit) {
     val popularViewModel: PopularViewModel = viewModel()
     val netflixOriginalViewModel: NetflixOriginalViewModel = viewModel()
     val previewMovieViewModel: PreviewMovieViewModel = viewModel()
+    val videoViewModel: VideoViewModel = viewModel()
+    val movieVideosViewModel: MovieVideosViewModel = viewModel()
+    val appViewModel: AppViewModel = viewModel()
 
     CompositionLocalProvider(
-        LocalTopRatedMoviesViewModel provides homeViewModel
+        LocalAppViewModel provides appViewModel
     ) {
         CompositionLocalProvider(
-            LocalNowPlayingViewModel provides nowPlayingViewModel
+            LocalTopRatedMoviesViewModel provides homeViewModel
         ) {
             CompositionLocalProvider(
-                LocalPopularViewModel provides popularViewModel
+                LocalNowPlayingViewModel provides nowPlayingViewModel
             ) {
                 CompositionLocalProvider(
-                    LocalNetflixOriginalViewModel provides netflixOriginalViewModel
+                    LocalPopularViewModel provides popularViewModel
                 ) {
                     CompositionLocalProvider(
-                        LocalSelectedMovieViewModel provides previewMovieViewModel
+                        LocalNetflixOriginalViewModel provides netflixOriginalViewModel
                     ) {
-                        content()
+                        CompositionLocalProvider(
+                            LocalPreviewMovieViewModel provides previewMovieViewModel
+                        ) {
+                            CompositionLocalProvider(
+                                LocalVideoViewModel provides videoViewModel
+                            ) {
+                                CompositionLocalProvider(
+                                    LocalMovieVideoByIdViewModel provides movieVideosViewModel,
+                                ) {
+                                    content()
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -79,6 +107,18 @@ private val LocalPopularViewModel = staticCompositionLocalOf<PopularViewModel> {
     error("No PopularViewModel provided")
 }
 
-private val LocalSelectedMovieViewModel = staticCompositionLocalOf<PreviewMovieViewModel> {
+private val LocalPreviewMovieViewModel = staticCompositionLocalOf<PreviewMovieViewModel> {
     error("No SelectedMovieViewModel provided")
+}
+
+private val LocalVideoViewModel = staticCompositionLocalOf<VideoViewModel> {
+    error("No VideoViewModel provided")
+}
+
+private val LocalMovieVideoByIdViewModel = staticCompositionLocalOf<MovieVideosViewModel> {
+    error("No MovieVideoByIdViewModel provided")
+}
+
+private val LocalAppViewModel = staticCompositionLocalOf<AppViewModel> {
+    error("No AppViewModel provided")
 }

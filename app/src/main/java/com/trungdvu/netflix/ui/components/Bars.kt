@@ -202,74 +202,25 @@ fun TopBarPreview() {
     }
 }
 
-enum class DashboardSections(
-    @SuppressLint("SupportAnnotationUsage") @StringRes val title: String,
-    val icon: ImageVector,
-    val route: String
-) {
-    HOME("Home", Icons.Default.Home, "dashboard/home"),
-    PLAY_SOMETHING("Play Something", Icons.Default.PlayArrow, "dashboard/play"),
-    COMING_SOON("Coming Soon", Icons.Outlined.PlayArrow, "dashboard/coming_soon"),
-    DOWNLOADS("Downloads", Icons.Default.KeyboardArrowDown, "dashboard/downloads")
-}
-
-private val BottomNavigationItemPadding = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
-
+@ExperimentalAnimationApi
 @Composable
-fun NetflixBottomBar(
-    navController: NavController,
-    tabs: Array<DashboardSections>,
-    color: Color = NetflixTheme.colors.uiBackground,
-    contentColor: Color = NetflixTheme.colors.iconInteractive
+fun MovieDetailAppBar(
+    modifier: Modifier = Modifier,
+    upPress: () -> Unit
 ) {
+    NetflixSurface(
+        color = Color.Black.copy(alpha = 0.5f)
+    ) {
+        TopAppBar(
+            elevation = 0.dp,
+            backgroundColor = Color.Transparent,
+            contentColor = NetflixTheme.colors.uiBackground.copy(alpha = AlphaNearOpaque),
+            modifier = modifier.padding(top = 24.dp, bottom = 4.dp)
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    val dashboardSections = remember { DashboardSections.values() }
-    val routes = remember { dashboardSections.map { it.route } }
-
-    if (currentRoute in routes) {
-        val currentSection = dashboardSections.first { it.route == currentRoute }
-
-        NetflixSurface(
-            color = color,
-            contentColor = contentColor
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 65.dp)
-            ) {
-                tabs.forEach { section ->
-                    val selected = section == currentSection
-                    val tint by getIconTint(selected = selected)
-
-                    NetflixBottomNavigationItem(
-                        icon = {
-                            Icon(
-                                imageVector = section.icon,
-                                tint = tint,
-                                contentDescription = null
-                            )
-                        },
-                        text = {
-                            Text(
-                                text = "Trung",
-                                color = tint,
-                                fontSize = 8.sp,
-                                style = MaterialTheme.typography.button,
-                                maxLines = 1
-                            )
-                        },
-                        selected = selected,
-                        onSelected = {
-                        },
-                        modifier = BottomNavigationItemPadding.weight(1f)
-                    )
-                }
+            Column {
+                AppBar(showBack = true, upPress = upPress)
             }
-
         }
     }
 }
@@ -283,28 +234,4 @@ fun getIconTint(selected: Boolean): State<Color> {
             NetflixTheme.colors.iconInteractiveInactive
         }
     )
-}
-
-@Composable
-fun NetflixBottomNavigationItem(
-    icon: @Composable BoxScope.() -> Unit,
-    text: @Composable BoxScope.() -> Unit,
-    selected: Boolean,
-    onSelected: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.selectable(selected = selected, onClick = onSelected)
-    ) {
-        Box(
-            modifier = Modifier.layoutId("icon"),
-            content = icon
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(
-            modifier = Modifier.layoutId("text"),
-            content = text
-        )
-    }
 }

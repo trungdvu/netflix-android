@@ -1,14 +1,14 @@
 package com.trungdvu.netflix.data.repository
 
 import com.trungdvu.netflix.data.remote.MovieApiService
-import com.trungdvu.netflix.model.MovieListState
-import com.trungdvu.netflix.model.MovieListResponse
-import com.trungdvu.netflix.model.Result
-import com.trungdvu.netflix.model.SimilarMovieListResponse
+import com.trungdvu.netflix.model.*
+import com.trungdvu.netflix.util.Single
+import com.trungdvu.netflix.util.success
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -82,4 +82,20 @@ class MovieRepository @Inject constructor(
         }.onStart {
             emit(MovieListState(loading = true))
         }
+
+
+    suspend fun getMovieVideosById(
+        movieId: Long
+    ): Single<Error, MovieVideo> {
+        return try {
+            val result = movieApiService.getMovieVideosById(
+                movieId = movieId,
+                apiKey = "569137e6b761b50e2a92cd0a7afd29ea",
+            ).results.first().asDomainModel()
+            success(result)
+        } catch (e: Exception) {
+            Timber.tag("getMovieVideosById").e("Exception: ${e.message}")
+            error(com.trungdvu.netflix.util.Error.UnexpectedError)
+        }
+    }
 }

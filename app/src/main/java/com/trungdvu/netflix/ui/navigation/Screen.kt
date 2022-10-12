@@ -7,4 +7,6 @@ sealed class Screen(open val route: String = "") {
     object DashboardPlaySomething : Screen("dashboard/play_something")
     object DashboardDownloads : Screen("dashboard/downloads")
     object DashboardNewAndHot : Screen("dashboard/new_and_hot")
+
+    object MovieDetails : Screen("movie_details")
 }

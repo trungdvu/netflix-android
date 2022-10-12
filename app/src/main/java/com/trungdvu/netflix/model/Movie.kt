@@ -35,7 +35,7 @@ data class MovieListResponse(
 )
 
 data class SimilarMovie(
-    val id: Int,
+    val id: Long,
     val adult: Boolean,
     @SerializedName("backdrop_path")
     val backDropPath: String,
@@ -49,7 +49,7 @@ data class SimilarMovie(
 )
 
 data class SimilarMovieListResponse(
-    val results: List<SimilarMovie>
+    val results: List<Movie>
 )
 
 data class MovieVideo(

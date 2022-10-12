@@ -27,32 +27,32 @@ import kotlinx.coroutines.launch
 import com.trungdvu.netflix.ui.screens.dashboard.DashboardSections
 import com.trungdvu.netflix.ui.screens.dashboard.NetflixBottomBar
 import com.trungdvu.netflix.ui.theme.NetflixTheme
+import com.trungdvu.netflix.ui.viewModel.ViewModelProvider
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun App() {
     ProvideMultiViewModel {
         val context = LocalContext.current
-        val navController = rememberAnimatedNavController()
+        val appViewModel = ViewModelProvider.appViewModel
         var isOnline by remember {
             mutableStateOf(checkIfOnline(context))
-
         }
-        val (shouldShowAppBar, updateAppBarVisibility) = remember { mutableStateOf(true) }
+        val navController = rememberAnimatedNavController()
+        val tabs = remember { DashboardSections.values() }
+        val bottomSheetCoroutineScope = rememberCoroutineScope()
+        val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+        )
         val homeScreenScrollState = rememberLazyListState()
         val isScrolledDown = remember {
             derivedStateOf {
                 homeScreenScrollState.firstVisibleItemScrollOffset > 0
             }
         }
-        val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-            bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
-        )
-        val bottomSheetCoroutineScope = rememberCoroutineScope()
         val mainNavActions = remember(navController) {
-            MainActions(navController, updateAppBarVisibility)
+            MainActions(navController, appViewModel.updateAppBarVisibility)
         }
-        val tabs = remember { DashboardSections.values() }
 
         if (isOnline) {
             BottomSheetScaffold(
@@ -78,7 +78,7 @@ fun App() {
                         )
                     },
                     fab = {
-                        if (shouldShowAppBar) {
+                        if (appViewModel.shouldShowAppBar.value) {
                             PlaySomethingFAB(isScrolledUp = isScrolledDown.value.not())
                         }
                     }
@@ -89,8 +89,9 @@ fun App() {
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         bottomSheetCoroutineScope = bottomSheetCoroutineScope,
                         homeScreenScrollState = homeScreenScrollState,
+                        mainNavActions = mainNavActions
                     )
-                    if (shouldShowAppBar) {
+                    if (appViewModel.shouldShowAppBar.value) {
                         TopBar(isScrolledDown = isScrolledDown.value)
                     }
                 }

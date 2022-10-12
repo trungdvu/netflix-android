@@ -1,21 +1,23 @@
 package com.trungdvu.netflix.ui.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.*
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.trungdvu.netflix.ui.screens.dashboard.downloads.DownloadsScreen
 import com.trungdvu.netflix.ui.screens.dashboard.home.HomeScreen
 import com.trungdvu.netflix.ui.screens.dashboard.new_and_hot.NewAndHotScreen
 import com.trungdvu.netflix.ui.screens.dashboard.play_something.PlaySomethingScreen
+import com.trungdvu.netflix.ui.screens.detail.MovieDetailsScreen
 import com.trungdvu.netflix.ui.screens.splash.AnimatedSplashScreen
 import kotlinx.coroutines.CoroutineScope
 
@@ -29,7 +31,7 @@ fun RootNavigation(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     bottomSheetCoroutineScope: CoroutineScope,
     homeScreenScrollState: LazyListState,
-//    mainNavActions: MainActions
+    mainNavActions: MainActions
 ) {
     AnimatedNavHost(
         navController = navController,
@@ -64,6 +66,45 @@ fun RootNavigation(
                 DownloadsScreen()
             }
         }
+
+        composable(
+            route = "${Screen.MovieDetails.route}/{movieId}",
+            arguments = listOf(navArgument("movieId") { type = NavType.LongType }),
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { 300 },
+                    animationSpec = tween(250)
+                ) + fadeIn(animationSpec = tween(250))
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { -300 },
+                    animationSpec = tween(250)
+                ) + fadeOut(animationSpec = tween(250))
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -300 },
+                    animationSpec = tween(250)
+                ) + fadeIn(animationSpec = tween(250))
+            }
+        ) { from: NavBackStackEntry ->
+
+            BackHandler {
+                mainNavActions.upPress(from)
+            }
+
+            val arguments = requireNotNull(from.arguments)
+            val movieId = arguments.getLong("movieId")
+
+            MovieDetailsScreen(
+                movieId = movieId,
+                upPress = {
+                    mainNavActions.upPress(from)
+                }
+            )
+        }
+
     }
 }
 
@@ -73,22 +114,20 @@ class MainActions(
 ) {
     val openMovieDetails = { movieId: Long ->
         updateAppBarVisibility(false)
-        navController.navigate("${"movieId"}/$movieId") {
-            // Pop up to the start destination of the graph to avoid building up a large
-            // stack of destinations on the back stack as users select items
+        navController.navigate("${Screen.MovieDetails.route}/$movieId") {
             popUpTo(navController.graph.startDestinationId)
-            // Avoid multiple copies of the same destination when re-selecting the same item
             launchSingleTop = true
         }
     }
-    val upPress: (rom: NavBackStackEntry) -> Unit = { from: NavBackStackEntry ->
-        // In order to discard duplicated navigation events, we check the Lifecycle
-//        if (from.lifecycleIsResumed()) {
-//            updateAppBarVisibility(true)
-//            navController.navigateUp()
-//        }
+    val upPress: (from: NavBackStackEntry) -> Unit = { from: NavBackStackEntry ->
+        if (from.lifecycleIsResumed()) {
+            updateAppBarVisibility(true)
+            navController.navigateUp()
+        }
     }
 }
+
+fun NavBackStackEntry.lifecycleIsResumed() = this.lifecycle.currentState == Lifecycle.State.RESUMED
 
 //            enterTransition = {
 //                slideInHorizontally(

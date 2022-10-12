@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.trungdvu.netflix.ui.components.NetflixSurface
+import com.trungdvu.netflix.ui.components.onBottomSheetTapped
 import com.trungdvu.netflix.ui.screens.dashboard.home.components.HighlightedMovie
 import com.trungdvu.netflix.ui.screens.dashboard.home.components.LargeMovieSection
 import com.trungdvu.netflix.ui.screens.dashboard.home.components.MovieSection
@@ -29,6 +30,7 @@ fun HomeScreen(
     val nowPlayingMovies by ViewModelProvider.nowPlayingViewModel.nowPlayingMovies.collectAsState()
     val popularMovies by ViewModelProvider.popularViewModel.popularMovies.collectAsState()
     val netflixOriginalMovies by ViewModelProvider.netflixOriginalViewModel.netflixOriginalMovies.collectAsState()
+    val previewMovieViewModel = ViewModelProvider.previewMovieViewModel
 
     NetflixSurface(
         color = NetflixTheme.colors.appBackground,
@@ -37,20 +39,42 @@ fun HomeScreen(
             state = scrollState,
         ) {
             item {
-                HighlightedMovie(
-                    onClick = {},
-                    modifier = Modifier,
-                    movie = topRatedMovies.data!!.results[1]
-                )
+                when {
+                    topRatedMovies.isSuccessful -> {
+                        HighlightedMovie(
+                            onClick = {
+                                previewMovieViewModel.setSelectedMovie(topRatedMovies.data!!.results[1])
 
-                Spacer(modifier = Modifier.height(10.dp))
-                MovieSection(
-                    title = "Top Picks for trungvu",
-                    onMovieClick = { movieId ->
-                    },
-                    modifier = Modifier,
-                    movies = topRatedMovies.data!!.results
-                )
+                                onBottomSheetTapped(
+                                    coroutineScope = coroutineScope,
+                                    bottomSheetScaffoldState = bottomSheetScaffoldState
+                                )
+                            },
+                            modifier = modifier,
+                            movie = topRatedMovies.data!!.results[1]
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        MovieSection(
+                            title = "Trending Now",
+                            onMovieClick = { movieId ->
+                                val movie = topRatedMovies.data!!.results.find {
+                                    it.id == movieId
+                                }
+                                previewMovieViewModel.setSelectedMovie(movie)
+
+                                onBottomSheetTapped(
+                                    coroutineScope = coroutineScope,
+                                    bottomSheetScaffoldState = bottomSheetScaffoldState
+                                )
+                            },
+                            modifier = Modifier,
+                            movies = topRatedMovies.data!!.results
+                        )
+                    }
+
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
                 when {
@@ -58,6 +82,15 @@ fun HomeScreen(
                         MovieSection(
                             title = "Trending Now",
                             onMovieClick = { movieId ->
+                                val movie = nowPlayingMovies.data!!.results.find {
+                                    it.id == movieId
+                                }
+                                previewMovieViewModel.setSelectedMovie(movie)
+
+                                onBottomSheetTapped(
+                                    coroutineScope = coroutineScope,
+                                    bottomSheetScaffoldState = bottomSheetScaffoldState
+                                )
                             },
                             modifier = Modifier,
                             movies = nowPlayingMovies.data!!.results
@@ -71,6 +104,13 @@ fun HomeScreen(
                         LargeMovieSection(
                             title = "Only on Netflix",
                             onMovieClick = { movieId ->
+                                previewMovieViewModel.setSelectedMovie(netflixOriginalMovies.data!!.results.find {
+                                    it.id == movieId
+                                })
+                                onBottomSheetTapped(
+                                    coroutineScope = coroutineScope,
+                                    bottomSheetScaffoldState = bottomSheetScaffoldState
+                                )
                             },
                             modifier = Modifier,
                             movies = netflixOriginalMovies.data!!.results
@@ -84,6 +124,13 @@ fun HomeScreen(
                         MovieSection(
                             title = "Popular on Netflix",
                             onMovieClick = { movieId ->
+                                previewMovieViewModel.setSelectedMovie(popularMovies.data!!.results.find {
+                                    it.id == movieId
+                                })
+                                onBottomSheetTapped(
+                                    coroutineScope = coroutineScope,
+                                    bottomSheetScaffoldState = bottomSheetScaffoldState
+                                )
                             },
                             modifier = Modifier,
                             movies = popularMovies.data!!.results

@@ -33,7 +33,7 @@ fun BottomSheetContent(
     onMovieClick: (Long) -> Unit,
     onBottomSheetClosePressed: () -> Unit
 ) {
-    when (val selectedMovie = ViewModelProvider.selectedMovieViewModel.selectedMovie) {
+    when (val selectedMovie = ViewModelProvider.previewMovieViewModel.selectedMovie) {
         is Result.Success -> {
             selectedMovie.data?.let { safeSelectedMovie ->
                 BottomSheetLayout(
@@ -218,7 +218,7 @@ fun EpisodesAndInfo(modifier: Modifier) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "Episodes &amp; Info",
+            text = "Episodes & Info",
             modifier = Modifier
                 .weight(10f)
                 .align(Alignment.CenterVertically)
